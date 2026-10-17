@@ -139,7 +139,9 @@ export function WikiPresentation() {
       {geometry && <svg className="v-connections" viewBox={`0 0 ${geometry.width} ${geometry.height}`} aria-hidden="true">
         <defs><filter id="v-route-glow" x="-50%" y="-100%" width="200%" height="300%"><feGaussianBlur stdDeviation="7" /></filter></defs>
         <path className="v-wire-shadow" d={geometry.input.path} />
-        <path className="v-wire" d={geometry.input.path} stroke="#53b998" />
+        <path className="v-input-aura" d={geometry.input.path} filter="url(#v-route-glow)" />
+        <path className="v-wire v-input-wire" d={geometry.input.path} stroke="#53b998" />
+        <path className="v-wire-highlight" d={geometry.input.path} />
         <path className={`v-input-flow ${exchange?.phase === "sending" ? "active" : ""}`} d={geometry.input.path} />
         {geometry.outputs.map((route, index) => {
           const category = categories[index].id;

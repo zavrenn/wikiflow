@@ -23,11 +23,11 @@
 .v-expand { width: 35px; padding: 0; }
 .v-stage { position: relative; flex: 1; width: 94%; max-width: 1800px; margin: 0 auto; min-height: 630px; max-height: 1100px; }
 .v-question { position: absolute; top: 10%; left: 34%; width: 33%; margin: 0; z-index: 5; text-align: center; font: 500 clamp(29px, 2.55vw, 47px)/1.12 var(--v-serif); letter-spacing: -1.6px; color: #131e1a; text-wrap: balance; }
-.v-source { position: absolute; left: -1.8%; top: 15%; width: 39%; height: 71%; z-index: 3; }
-.v-globe { position: absolute; width: 108%; aspect-ratio: 1; left: -4%; top: 50%; transform: translateY(-50%); animation: v-globe-float 9s ease-in-out infinite; }
+.v-source { position: absolute; left: -1.8%; top: 15%; width: 33%; height: 71%; z-index: 3; }
+.v-globe { position: absolute; width: 102%; aspect-ratio: 1; left: -1%; top: 50%; transform: translateY(-50%); animation: v-globe-float 9s ease-in-out infinite; }
 .v-globe img { display: block; width: 100%; height: auto; filter: drop-shadow(2px 27px 25px #1e38352c); }
 .v-globe-aura { position: absolute; width: 120%; aspect-ratio: 1; left: -9%; top: 50%; transform: translateY(-50%); border-radius: 50%; background: radial-gradient(circle, #87bc9b30 15%, #cfe6d41f 48%, transparent 69%); }
-.v-source-badge { position: absolute; left: 17%; top: -1%; display: flex; align-items: center; gap: 18px; padding: 13px 23px; font: 600 clamp(26px, 2.35vw, 41px)/1 var(--v-serif); letter-spacing: -.9px; border: 1px solid #cbd6ce; border-radius: 12px; background: linear-gradient(150deg, #fffffff5, #f6faf4ee); box-shadow: 0 13px 28px #24493613, inset 0 1px 0 white; transform: rotate(-4deg); white-space: nowrap; }
+.v-source-badge { position: absolute; left: 17%; top: 8%; display: flex; align-items: center; gap: 18px; padding: 13px 23px; font: 600 clamp(26px, 2.35vw, 41px)/1 var(--v-serif); letter-spacing: -.9px; border: 1px solid #cbd6ce; border-radius: 12px; background: linear-gradient(150deg, #fffffff5, #f6faf4ee); box-shadow: 0 13px 28px #24493613, inset 0 1px 0 white; transform: rotate(-4deg); white-space: nowrap; }
 .v-wikipedia-w { font: 500 1.12em var(--v-serif); letter-spacing: -5px; padding-right: 5px; }
 .v-source-badge i { position: absolute; right: -37px; width: 12px; height: 12px; background: #068b3c; border: 3px solid white; box-sizing: content-box; border-radius: 50%; box-shadow: 0 0 18px #0aa34877; }
 .v-orbit { position: absolute; left: -7%; top: 50%; width: 114%; aspect-ratio: 1; border: 1px solid #ffffffbc; border-radius: 50%; transform: translateY(-50%) rotate(-25deg) scaleY(.7); }
@@ -93,11 +93,13 @@
 .v-route.selected .v-port { fill: var(--route); }
 .v-route.selected .v-port-halo { opacity: .2; }
 .v-route.selected .v-wire-signal { opacity: .85; animation: v-wire-flow 3s linear infinite; }
-.v-input-flow { fill: none; stroke: #1db085; stroke-width: 3; stroke-dasharray: 3 18; opacity: .15; }
+.v-input-aura { fill: none; stroke: #35cba0; stroke-width: 15px; opacity: .18; }
+.v-input-wire { stroke-width: 4px; opacity: .7; }
+.v-input-flow { fill: none; stroke: #1db085; stroke-width: 3; stroke-dasharray: 3 18; opacity: .4; }
 .v-input-flow.active { opacity: 1; animation: v-wire-flow 1.7s linear infinite; }
 .v-step { position: absolute; bottom: 7%; display: flex; align-items: center; justify-content: center; gap: 9px; color: #718277; font-size: 12px; letter-spacing: .15px; }
 .v-step b { font: 10px var(--mono); color: #9aaa9d; }
-.v-step-source { left: 6%; width: 25%; }
+.v-step-source { left: 2%; width: 25%; }
 .v-step-decision { left: 38%; width: 25%; }
 .v-step-topic { left: 74%; width: 25%; }
 .v-footer { flex: 0 0 52px; display: flex; justify-content: space-between; align-items: center; margin: 0 3.2%; color: #7b8b7e; font-size: 11px; letter-spacing: .15px; }
@@ -116,7 +118,7 @@
 @media (min-width: 1900px) { .v-question { top: 13%; } .v-article { min-height: 260px; padding: 29px 32px 22px; } }
 @media (max-width: 1200px) and (min-width: 760px) {
   .v-shell { min-height: 680px; } .v-stage { width: 95%; min-height: 550px; } .v-topbar { flex-basis: 68px; }
-  .v-source { width: 38%; } .v-source-badge { gap: 12px; padding: 12px 18px; font-size: 27px; }
+  .v-source { width: 35%; } .v-source-badge { gap: 12px; padding: 12px 18px; font-size: 27px; }
   .v-article { left: 13%; width: 85%; padding: 19px 20px 16px; min-height: 211px; } .v-article h2 { font-size: 30px; margin: 14px 0; min-height: 34px; }
   .v-article p { font-size: 12px; } .v-article-foot { font-size: 9px; }
   .v-hub { width: 23%; } .v-hub h2 { font-size: clamp(22px, 2.7vw, 29px); margin-bottom: 13px; } .v-openai-name { font-size: 22px; }
@@ -128,7 +130,7 @@
   .v-stage { flex: none; width: 100%; height: 1390px; max-height: none; min-height: 0; }
   .v-question { top: 2.3%; left: 9%; width: 82%; font-size: 33px; letter-spacing: -1px; }
   .v-source { left: 7%; top: 12%; width: 83%; height: 28%; } .v-source-badge { top: -2%; left: 15%; font-size: 29px; padding: 12px 22px; }
-  .v-globe { width: 102%; left: 0; } .v-orbit { width: 110%; left: -4%; }
+  .v-globe { width: 92%; left: 5%; } .v-orbit { width: 110%; left: -4%; }
   .v-article { top: 37%; left: 14%; width: 79%; min-height: 210px; padding: 20px 22px 18px; } .v-article h2 { font-size: 32px; margin: 15px 0; min-height: 36px; } .v-article p { font-size: 12px; } .v-article-foot { font-size: 9px; }
   .v-hub { top: 53%; left: 50%; width: 247px; } .v-hub h2 { font-size: 30px; margin-bottom: 15px; } .v-openai-name { font-size: 23px; } .v-answer { font-size: 12px; }
   .v-destinations { top: 74%; bottom: 3%; left: 6%; right: 6%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 23px 18px; }
