@@ -1,0 +1,61 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.*
+
+# Next.js, builds, and generated types
+.next/
+out/
+dist/
+build/
+next-env.d.ts
+*.tsbuildinfo
+
+# Secrets and machine-specific environment files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+.aws/
+
+# Local hosting and agent state
+.vercel/
+.netlify/
+.wrangler/
+.codex/
+.agents/
+.claude/settings.local.json
+
+# Logs, test output, and caches
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+coverage/
+.nyc_output/
+.cache/
+test-results/
+playwright-report/
+*.tgz
+
+# Local captures and scratch work; curated README assets live in docs/images/
+/artifacts/
+/recordings/
+/tmp/
+/temp/
+
+# Editor and operating-system files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
