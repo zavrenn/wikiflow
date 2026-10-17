@@ -2,7 +2,7 @@
 
 **The world edits. AI decides.**
 
-Watch real Wikipedia edits flow through [OpenAI's Decisions API](https://developers.openai.com/api/docs/guides/decisions). A presentation built for recording shows one article, one question, and the returned topic as an animated route into Technology, Science, Culture, or Everything else.
+Watch real Wikipedia edits flow through [OpenAI's Decisions API](https://developers.openai.com/api/docs/guides/decisions). A miniature 3D sorting machine sends each article to Technology, Science, Culture, or Other, using the actual API response.
 
 ![WikiFlow showing a live Wikipedia article classified by the Decisions API](docs/images/wikiflow.png)
 
@@ -12,11 +12,11 @@ Watch real Wikipedia edits flow through [OpenAI's Decisions API](https://develop
 Live Wikipedia edit → “Which topic?” → Decisions API answer → animated route
 ```
 
-An animated Wikipedia globe supplies the article. The center of the scene asks OpenAI which topic fits it. The returned choice lights up the destination and sends the article there. Article titles and decisions come from live data and actual requests.
+An article arrives from the Wikipedia globe on a conveyor. When it enters the OpenAI chamber, the app requests its topic. The response immediately colors the machine, lights the chosen track, and sends the same article into its category container. The label above the machine shows the actual choice and measured API round-trip time.
 
 The detailed **[console](http://localhost:3000/console)** is also available, with confidence, latency, category probabilities, and an inspectable decision trail.
 
-Built with **Next.js, React, TypeScript, SVG, and Motion**.
+Built with **Next.js, React, TypeScript, Three.js, and React Three Fiber**. The detailed console uses SVG and Motion.
 
 ## Run locally
 
@@ -50,16 +50,18 @@ You need **Node.js 22+**, **npm 10+**, and your own OpenAI API key with access t
 
 Open **[localhost:3000](http://localhost:3000)**. The live pipeline starts automatically. Restart the server after changing the environment file.
 
+The 3D presentation requires WebGL2. The detailed console is available at `/console`.
+
 The key stays on the server. `.env.local` is excluded from Git, and visitors running a clone supply their own key.
 
 ## Watch the decision happen
 
-- **An edit arrives:** a large article card stays pinned over the Wikipedia globe.
-- **OpenAI picks a topic:** the question and actual answer appear around the decision point.
-- **The answer sets its path:** the chosen destination lights up and receives the same article.
-- **Follow the story:** large captions explain each step as it happens.
+- **An edit arrives:** one real article travels along the conveyor into the decision chamber.
+- **OpenAI picks a topic:** the machine pulses while the actual request is pending.
+- **The answer sets its path:** the chosen track lights immediately and carries the same article into its container.
+- **See the speed:** the machine's label shows the measured server-to-OpenAI round trip in milliseconds.
 
-The presentation samples one edit about every twelve seconds and holds the answer long enough to read. The console samples about every five seconds. Animation time is separate from the measured API latency, which is available in the console.
+The 3D scene samples about one edit every 4.5 seconds, with one request at a time. It adds no hold after the API responds. The conveyor and routing animations are separate from measured API latency. The console samples about every five seconds and holds responses briefly for inspection.
 
 Use **Pause / Resume** or **Space** to control the pipeline. Pause disconnects the feed and stops new API calls; a request already received by OpenAI may still finish. Use the fullscreen button for recording.
 
@@ -71,7 +73,8 @@ Use **Pause / Resume** or **Space** to control the pipeline. Pause disconnects t
 | `src/app/api/decide/route.ts` | Calls `POST /v1/decisions` from the server with one `choice` question. |
 | `src/lib/decision-config.ts` | Shares the visible question with the real API instructions and defines presentation timing. |
 | `src/lib/use-wiki-flow.ts` | Samples the feed and coordinates the input, request, response, and routing phases. |
-| `src/components/wiki-presentation.tsx` | Renders the main presentation with the globe, article, decision point, routes, and captions. |
+| `src/components/wiki-presentation.tsx` | Coordinates the 3D presentation, readable labels, controls, and live API answer. |
+| `src/components/sorting-world.tsx` | Renders and animates the globe, conveyor, decision chamber, category tracks, and containers. |
 | `src/components/wiki-flow.tsx` | Renders the detailed console at `/console`. |
 
 The initial buffer contains actual recent edits. History stays in browser memory and resets on refresh. Topic distribution follows what people are editing, so some lanes may remain empty for a while.

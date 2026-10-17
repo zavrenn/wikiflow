@@ -58,6 +58,8 @@ export function useWikiFlow(running: boolean, timing: FlowTiming = DEFAULT_TIMIN
     let busy = 0;
     let pending: WikiEdit[] = [];
     let observedThisSecond = 0;
+    let started = false;
+    let first: ReturnType<typeof setTimeout> | undefined;
     const controllers = new Set<AbortController>();
     setError(null);
     setConnection("connecting");
@@ -74,6 +76,7 @@ export function useWikiFlow(running: boolean, timing: FlowTiming = DEFAULT_TIMIN
         setIncoming(recent.current);
         setReceived((value) => value + 1);
         observedThisSecond++;
+        if (!started && !first) first = setTimeout(() => { first = undefined; void decide(); }, 250);
       } catch { /* Invalid stream events cannot enter the decision queue. */ }
     };
     source.addEventListener("edit", onEdit);
@@ -90,6 +93,7 @@ export function useWikiFlow(running: boolean, timing: FlowTiming = DEFAULT_TIMIN
       // Sample the freshest edit; never build a delayed backlog behind the live feed.
       const edit = pending.pop()!;
       pending = [];
+      started = true;
       const abort = new AbortController();
       controllers.add(abort);
       busy++;
@@ -125,9 +129,9 @@ export function useWikiFlow(running: boolean, timing: FlowTiming = DEFAULT_TIMIN
           count: current.count + 1, latency: current.latency + decision.latencyMs,
           confidence: current.confidence + decision.confidence, tokens: current.tokens + decision.inputTokens,
         }));
-        // Hold the genuine API response long enough to read before applying its route.
-        // These presentation delays never enter the measured API latency.
-        await wait(timing.answerHold);
+        // The console can hold an answer for inspection. The 3D scene routes immediately.
+        // Presentation time never enters the measured API latency.
+        if (timing.answerHold > 0) await wait(timing.answerHold);
         if (!active || abort.signal.aborted) return;
         setExchange({ edit, phase: "routing", result: decision });
         setFlights((current) => [...current.slice(-5), { id: `${edit.id}-out`, title: edit.title, direction: "out", row: 0, category: decision.category, confidence: decision.confidence }]);
@@ -150,7 +154,6 @@ export function useWikiFlow(running: boolean, timing: FlowTiming = DEFAULT_TIMIN
       setTraffic((current) => [...current.slice(1), observedThisSecond]);
       observedThisSecond = 0;
     }, 1000);
-    const first = setTimeout(() => void decide(), 750);
     return () => {
       active = false;
       source.close();
