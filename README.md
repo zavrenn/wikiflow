@@ -61,7 +61,7 @@ The key stays on the server. `.env.local` is excluded from Git, and visitors run
 - **The answer sets its path:** the chosen connection lights immediately and carries the article toward its category, which displays the same title.
 - **See the speed:** the hub shows the measured server-to-OpenAI round trip in milliseconds.
 
-The presentation samples about one edit every 4.5 seconds, with one request at a time. It adds no hold after the API responds. Input and routing animations are separate from measured API latency. The console samples about every five seconds and holds responses briefly for inspection.
+The presentation starts a fresh edit about every three seconds when edits are available, with one request at a time. If a cycle takes longer, the next edit starts after it completes. It always selects the newest pending edit. It adds no hold after the API responds. Input and routing animations are separate from measured API latency. The console uses a five-second sampling interval and holds responses briefly for inspection.
 
 Use **Pause / Resume** or **Space** to control the pipeline. Pause disconnects the feed and stops new API calls; a request already received by OpenAI may still finish. Use the fullscreen button for recording.
 

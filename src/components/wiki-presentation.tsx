@@ -10,7 +10,7 @@ import { categories } from "@/lib/types";
 import { useWikiFlow, type Flight, type FlowTiming } from "@/lib/use-wiki-flow";
 import "./wiki-presentation.css";
 
-const PRESENTATION_TIMING: FlowTiming = { sampleInterval: 4500, inputTravel: 1100, answerHold: 0, outputTravel: 1500 };
+const PRESENTATION_TIMING: FlowTiming = { sampleInterval: 3000, inputTravel: 1100, answerHold: 0, outputTravel: 1500 };
 const TOPICS = {
   technology: { label: "Technology", color: "#008b42", Icon: Cpu },
   science: { label: "Science", color: "#0674f9", Icon: FlaskConical },

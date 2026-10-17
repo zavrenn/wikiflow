@@ -58,12 +58,21 @@ export function useWikiFlow(running: boolean, timing: FlowTiming = DEFAULT_TIMIN
     let busy = 0;
     let pending: WikiEdit[] = [];
     let observedThisSecond = 0;
-    let started = false;
-    let first: ReturnType<typeof setTimeout> | undefined;
+    let lastStarted: number | null = null;
+    let nextDecision: ReturnType<typeof setTimeout> | undefined;
     const controllers = new Set<AbortController>();
     setError(null);
     setConnection("connecting");
     const source = new EventSource("/api/stream");
+
+    function scheduleDecision() {
+      if (!active || blocked || busy || !pending.length || nextDecision !== undefined) return;
+      const delay = lastStarted === null ? 250 : Math.max(0, lastStarted + timing.sampleInterval - performance.now());
+      nextDecision = setTimeout(() => {
+        nextDecision = undefined;
+        void decide();
+      }, delay);
+    }
 
     const onEdit = (event: MessageEvent) => {
       try {
@@ -76,7 +85,7 @@ export function useWikiFlow(running: boolean, timing: FlowTiming = DEFAULT_TIMIN
         setIncoming(recent.current);
         setReceived((value) => value + 1);
         observedThisSecond++;
-        if (!started && !first) first = setTimeout(() => { first = undefined; void decide(); }, 250);
+        scheduleDecision();
       } catch { /* Invalid stream events cannot enter the decision queue. */ }
     };
     source.addEventListener("edit", onEdit);
@@ -93,7 +102,7 @@ export function useWikiFlow(running: boolean, timing: FlowTiming = DEFAULT_TIMIN
       // Sample the freshest edit; never build a delayed backlog behind the live feed.
       const edit = pending.pop()!;
       pending = [];
-      started = true;
+      lastStarted = performance.now();
       const abort = new AbortController();
       controllers.add(abort);
       busy++;
@@ -146,10 +155,13 @@ export function useWikiFlow(running: boolean, timing: FlowTiming = DEFAULT_TIMIN
       } finally {
         controllers.delete(abort);
         busy--;
-        if (active) { setInFlight(busy); if (!busy) setProcessing(null); }
+        if (active) {
+          setInFlight(busy);
+          if (!busy) setProcessing(null);
+          scheduleDecision();
+        }
       }
     }
-    const interval = setInterval(() => void decide(), timing.sampleInterval);
     const trafficTimer = setInterval(() => {
       setTraffic((current) => [...current.slice(1), observedThisSecond]);
       observedThisSecond = 0;
@@ -157,9 +169,8 @@ export function useWikiFlow(running: boolean, timing: FlowTiming = DEFAULT_TIMIN
     return () => {
       active = false;
       source.close();
-      clearInterval(interval);
       clearInterval(trafficTimer);
-      clearTimeout(first);
+      clearTimeout(nextDecision);
       controllers.forEach((controller) => controller.abort());
       setFlights([]);
       setProcessing(null);
