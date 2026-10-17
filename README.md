@@ -76,9 +76,9 @@ Use **Pause / Resume** or **Space** to control the pipeline. Pause disconnects t
 | `src/components/wiki-presentation.tsx` | Connects the 2.5D scene, responsive SVG routes, controls, and live API answer to the pipeline. |
 | `src/components/wiki-flow.tsx` | Renders the detailed console at `/console`. |
 
-The initial buffer contains actual recent edits. History stays in browser memory and resets on refresh. Topic distribution follows what people are editing, so some lanes may remain empty for a while.
+The feed includes non-bot article edits and new pages on English Wikipedia. Startup and fallback polling use actual recent changes. History stays in browser memory and resets on refresh. Topic distribution follows what people are editing, so some lanes may remain empty for a while.
 
-The API classifies from the **article title and edit summary**, rather than fetching the full article. Latency measures the server-to-OpenAI round trip. Confidence and category probabilities are separate API fields.
+The API classifies from the **article title and edit summary**. Latency measures the server-to-OpenAI request through receiving and parsing the complete response body. Animation time and browser-to-server time are excluded. Confidence and category probabilities are separate API fields.
 
 ## Commands
 
