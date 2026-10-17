@@ -19,7 +19,19 @@ export interface DecisionExchange {
   result?: DecisionResult;
 }
 
-export function useWikiFlow(running: boolean) {
+export interface FlowTiming {
+  sampleInterval: number;
+  inputTravel: number;
+  answerHold: number;
+  outputTravel: number;
+}
+
+const DEFAULT_TIMING: FlowTiming = {
+  sampleInterval: SAMPLE_INTERVAL_MS, inputTravel: INPUT_TRAVEL_MS,
+  answerHold: ANSWER_HOLD_MS, outputTravel: OUTPUT_TRAVEL_MS,
+};
+
+export function useWikiFlow(running: boolean, timing: FlowTiming = DEFAULT_TIMING) {
   const [connection, setConnection] = useState("connecting");
   const [sourceMode, setSourceMode] = useState("stream");
   const [incoming, setIncoming] = useState<WikiEdit[]>([]);
@@ -84,14 +96,14 @@ export function useWikiFlow(running: boolean) {
       setInFlight(busy);
       setProcessing(edit);
       setExchange({ edit, phase: "sending" });
-      setFlights((current) => [...current, { id: `${edit.id}-in`, title: edit.title, direction: "in", row: 0 }]);
+      setFlights((current) => [...current.slice(-5), { id: `${edit.id}-in`, title: edit.title, direction: "in", row: 0 }]);
       const wait = (ms: number) => new Promise<void>((resolve) => {
         const done = () => { clearTimeout(timer); abort.signal.removeEventListener("abort", done); resolve(); };
         const timer = setTimeout(done, ms);
         abort.signal.addEventListener("abort", done, { once: true });
       });
       try {
-        await wait(INPUT_TRAVEL_MS);
+        await wait(timing.inputTravel);
         if (!active || abort.signal.aborted) return;
         setExchange({ edit, phase: "requesting" });
         const response = await fetch("/api/decide", {
@@ -115,11 +127,11 @@ export function useWikiFlow(running: boolean) {
         }));
         // Hold the genuine API response long enough to read before applying its route.
         // These presentation delays never enter the measured API latency.
-        await wait(ANSWER_HOLD_MS);
+        await wait(timing.answerHold);
         if (!active || abort.signal.aborted) return;
         setExchange({ edit, phase: "routing", result: decision });
-        setFlights((current) => [...current, { id: `${edit.id}-out`, title: edit.title, direction: "out", row: 0, category: decision.category, confidence: decision.confidence }]);
-        await wait(OUTPUT_TRAVEL_MS);
+        setFlights((current) => [...current.slice(-5), { id: `${edit.id}-out`, title: edit.title, direction: "out", row: 0, category: decision.category, confidence: decision.confidence }]);
+        await wait(timing.outputTravel);
         if (active && !abort.signal.aborted) setExchange({ edit, phase: "routed", result: decision });
       } catch (caught) {
         if (active && !abort.signal.aborted) {
@@ -133,7 +145,7 @@ export function useWikiFlow(running: boolean) {
         if (active) { setInFlight(busy); if (!busy) setProcessing(null); }
       }
     }
-    const interval = setInterval(() => void decide(), SAMPLE_INTERVAL_MS);
+    const interval = setInterval(() => void decide(), timing.sampleInterval);
     const trafficTimer = setInterval(() => {
       setTraffic((current) => [...current.slice(1), observedThisSecond]);
       observedThisSecond = 0;
@@ -151,7 +163,7 @@ export function useWikiFlow(running: boolean) {
       setExchange((current) => current ? { ...current, phase: "paused" } : null);
       setInFlight(0);
     };
-  }, [running, retry]);
+  }, [running, retry, timing]);
 
   return {
     connection: running ? connection : "paused", sourceMode, incoming, history, flights, processing, exchange, inFlight,

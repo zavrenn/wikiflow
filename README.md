@@ -1,8 +1,8 @@
 # WikiFlow
 
-**A world of edits. A stream of decisions.**
+**The world edits. AI decides.**
 
-Watch real Wikipedia edits flow through [OpenAI's Decisions API](https://developers.openai.com/api/docs/guides/decisions). For each selected article, WikiFlow shows the question, the returned topic and confidence, and an animated route into Technology, Science, Culture, or Everything else.
+Watch real Wikipedia edits flow through [OpenAI's Decisions API](https://developers.openai.com/api/docs/guides/decisions). A presentation built for recording shows one article, one question, and the returned topic as an animated route into Technology, Science, Culture, or Everything else.
 
 ![WikiFlow showing a live Wikipedia article classified by the Decisions API](docs/images/wikiflow.png)
 
@@ -12,7 +12,9 @@ Watch real Wikipedia edits flow through [OpenAI's Decisions API](https://develop
 Live Wikipedia edit → “Which topic?” → Decisions API answer → animated route
 ```
 
-The center of the scene shows a real API exchange. The returned choice determines the route. Article titles, classifications, probabilities, confidence, and latency come from live data and actual requests.
+An animated Wikipedia globe supplies the article. The center of the scene asks OpenAI which topic fits it. The returned choice lights up the destination and sends the article there. Article titles and decisions come from live data and actual requests.
+
+The detailed **[console](http://localhost:3000/console)** is also available, with confidence, latency, category probabilities, and an inspectable decision trail.
 
 Built with **Next.js, React, TypeScript, SVG, and Motion**.
 
@@ -52,12 +54,12 @@ The key stays on the server. `.env.local` is excluded from Git, and visitors run
 
 ## Watch the decision happen
 
-- **Incoming edits:** real, non-bot edits to English Wikipedia articles.
-- **OpenAI Decisions API:** the selected article stays pinned while the panel shows the question, allowed choices, and actual response.
-- **The route:** the returned category highlights, then the article flows into its matching lane.
-- **Decision trail:** click a row to inspect the per-category probabilities and the separate confidence value.
+- **An edit arrives:** a large article card stays pinned over the Wikipedia globe.
+- **OpenAI picks a topic:** the question and actual answer appear around the decision point.
+- **The answer sets its path:** the chosen destination lights up and receives the same article.
+- **Follow the story:** large captions explain each step as it happens.
 
-One edit is selected about every five seconds. A short hold after each answer makes the sequence readable in a recording. That presentation time is separate from the measured API latency.
+The presentation samples one edit about every twelve seconds and holds the answer long enough to read. The console samples about every five seconds. Animation time is separate from the measured API latency, which is available in the console.
 
 Use **Pause / Resume** or **Space** to control the pipeline. Pause disconnects the feed and stops new API calls; a request already received by OpenAI may still finish. Use the fullscreen button for recording.
 
@@ -69,7 +71,8 @@ Use **Pause / Resume** or **Space** to control the pipeline. Pause disconnects t
 | `src/app/api/decide/route.ts` | Calls `POST /v1/decisions` from the server with one `choice` question. |
 | `src/lib/decision-config.ts` | Shares the visible question with the real API instructions and defines presentation timing. |
 | `src/lib/use-wiki-flow.ts` | Samples the feed and coordinates the input, request, response, and routing phases. |
-| `src/components/wiki-flow.tsx` | Renders the SVG paths, animated cards, live API panel, metrics, and decision trail. |
+| `src/components/wiki-presentation.tsx` | Renders the main presentation with the globe, article, decision point, routes, and captions. |
+| `src/components/wiki-flow.tsx` | Renders the detailed console at `/console`. |
 
 The initial buffer contains actual recent edits. History stays in browser memory and resets on refresh. Topic distribution follows what people are editing, so some lanes may remain empty for a while.
 

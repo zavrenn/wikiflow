@@ -1,5 +1,5 @@
-import { WikiFlow } from "@/components/wiki-flow";
+import { WikiPresentation } from "@/components/wiki-presentation";
 
 export default function Home() {
-  return <WikiFlow />;
+  return <WikiPresentation />;
 }
