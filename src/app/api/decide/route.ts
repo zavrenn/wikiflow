@@ -46,8 +46,8 @@ export async function POST(request: Request) {
         }],
       }),
     });
-    const latencyMs = Math.round(performance.now() - started);
     const data = await upstream.json();
+    const latencyMs = Math.round(performance.now() - started);
     if (!upstream.ok) {
       const reason = data.error?.message || `OpenAI returned HTTP ${upstream.status}.`;
       return NextResponse.json({ error: reason, upstreamStatus: upstream.status }, { status: upstream.status === 429 ? 429 : 502 });
