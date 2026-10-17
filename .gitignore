@@ -48,6 +48,7 @@ playwright-report/
 /recordings/
 /tmp/
 /temp/
+/design-qa.md
 
 # Editor and operating-system files
 .idea/

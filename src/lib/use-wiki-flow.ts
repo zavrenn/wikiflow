@@ -129,7 +129,7 @@ export function useWikiFlow(running: boolean, timing: FlowTiming = DEFAULT_TIMIN
           count: current.count + 1, latency: current.latency + decision.latencyMs,
           confidence: current.confidence + decision.confidence, tokens: current.tokens + decision.inputTokens,
         }));
-        // The console can hold an answer for inspection. The 3D scene routes immediately.
+        // The console can hold an answer for inspection. The presentation routes immediately.
         // Presentation time never enters the measured API latency.
         if (timing.answerHold > 0) await wait(timing.answerHold);
         if (!active || abort.signal.aborted) return;
